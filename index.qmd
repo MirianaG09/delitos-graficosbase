@@ -1,0 +1,132 @@
+---
+title: "Delitos de Costa Rica"
+author: "Miriana Lucía Guerrero Dinarte"
+format:
+  html:
+    toc: true
+    toc_float: true
+lang: es
+
+---
+
+# Presentación
+Este documento presenta estadísticas de delitos ocurridos en Costa Rica en el año 2022, de acuerdo con los datos publicados en el sitio de datos abiertos del [Organismo de Investigación Judicial (OIJ)](https://sitiooij.poder-judicial.go.cr/index.php/ayuda/servicios-policiales/servicios-a-organizaciones/indice-de-transparencia-del-sector-publico-costarricense/datos-abiertos).
+
+## Carga y muestra de datos
+```{r}
+#| label: carga-muestra-datos
+#| code-fold: true
+
+delitos_2022 <- read.csv("estadisticaspoliciales2022.csv")
+
+
+# Tabla con las 10 primeras filas y con columnas seleccionadas
+knitr::kable(
+    head(
+        delitos_2022[, c("Delito","SubDelito","Nacionalidad", "Fecha", "Victima", "Edad", "Provincia")], 
+        10
+    ),
+    caption = "Muestra de datos de delitos cometidos en 2022 en Costa Rica."
+)
+```
+
+## Gráficos de cantidad de delitos por provincia
+ 
+### Gráfico de barras verticales
+```{r}
+#| label: delitos-provincia-barras-verticales
+#| code-fold: true
+
+tabla_delitos <- table(delitos_2022$Provincia)
+
+tabla_delitos_ordenada <- sort(tabla_delitos, decreasing = TRUE)
+
+barplot(
+  height = tabla_delitos_ordenada,
+  las = 2,
+  cex.names = 0.6,
+  cex.axis = 0.6,
+  sub = "Fuente: OIJ",
+  main = "Cantidad de delitos cometidos en Costa Rica por provincia en el año 2022",
+  col = "pink"
+    )
+
+
+```
+ 
+### Gráfico de barras horizontales
+```{r}
+#| label: delitos-provincia-barras-horizontales
+#| code-fold: true
+
+tabla_delitos <- table(delitos_2022$Provincia)
+
+tabla_delitos_ordenada <- sort(tabla_delitos)
+
+barplot(
+    height = tabla_delitos_ordenada,
+    main = "Cantidad de delitos cometidos en Costa Rica por provincia en el año 2022", 
+    sub = "Fuente: OIJ.",
+    col = "lightblue",
+    las = 2,
+    cex.names = 0.5,
+    cex.axis = 0.7,
+    horiz = TRUE
+)
+```
+
+### Gráfico de pastel
+```{r}
+#| label: delitos-provincia-pastel
+#| code-fold: true
+
+tabla_delitos <- table(delitos_2022$Provincia)
+
+tabla_delitos_ordenada <- sort(tabla_delitos)
+
+
+pie(
+  tabla_delitos_ordenada,
+  main = "Cantidad de delitos cometidos en Costa Rica por provincia durante el año 2022",
+  sub = "Fuente: OIJ.",
+  col = topo.colors(length(tabla_delitos_ordenada)),
+  cex = 0.8,
+  labels = paste0(
+    round(100 * tabla_delitos_ordenada / sum(tabla_delitos_ordenada), 1), 
+    "%"
+  )
+)
+
+legend(
+  "topright",
+  legend = names(tabla_delitos_ordenada),
+  fill = topo.colors(length(tabla_delitos_ordenada)),
+  cex = 0.8,
+  bty = "n" # quitar el marco de la leyenda, valor = ("n", "o")
+)
+```
+
+## Gráficos de cantidad de delitos por cantón
+
+### Gráfico de barras verticales
+```{r}
+#| label: delitos-canton-barras-verticales
+#| code-fold: true
+
+tabla_delitos <- table(delitos_2022$Canton)
+
+tabla_delitos_ordenada <- sort(tabla_delitos, decreasing = TRUE)
+
+tabla_delitos_ordenada <- head(tabla_delitos_ordenada, 20)
+
+
+barplot(
+    height = tabla_delitos_ordenada,
+    main = "Cantidad de delitos cometidos en Costa Rica por cantón para el año 2022", 
+    sub = "Fuente: OIJ.",
+    col = "violet",
+    las = 2, # inclinación de las etiquetas (valor entre 0 y 3)
+    cex.names = 0.5,  # tamaño de las etiquetas
+    cex.axis = 0.7 # tamaño de los números en el eje 
+)
+```
